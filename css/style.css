@@ -1,0 +1,414 @@
+/* =====================================================
+   GreenPrints — Color & Font Variables
+   Theme: Holy Trinity College (green, white, small yellow accent)
+   ===================================================== */
+:root {
+  --green-dark: #145A2C;
+  --green: #1F7A3D;
+  --green-light: #E8F5EC;
+  --yellow: #F4C430;
+  --white: #FFFFFF;
+  --text-main: #1A1F1B;
+  --text-muted: #5B6B5F;
+  --border: #D8E6DC;
+
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --radius: 10px;
+}
+
+/* =====================================================
+   Base Reset
+   ===================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background: var(--white);
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* =====================================================
+   Buttons
+   ===================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7em 1.4em;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn--primary {
+  background: var(--green);
+  color: var(--white);
+}
+.btn--primary:hover {
+  background: var(--green-dark);
+  transform: translateY(-1px);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--green);
+  color: var(--green);
+}
+.btn--outline:hover {
+  background: var(--green-light);
+}
+
+.btn--large {
+  padding: 0.9em 1.8em;
+  font-size: 1rem;
+}
+
+/* =====================================================
+   Navbar
+   ===================================================== */
+.navbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.navbar__brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.navbar__system {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--green-dark);
+}
+
+.navbar__org {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.navbar__center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--green-dark);
+  white-space: nowrap;
+}
+
+/* =====================================================
+   Hero Section
+   ===================================================== */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 70px 40px 90px;
+}
+
+.hero__eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+.hero__title {
+  font-size: clamp(2rem, 3.6vw, 2.8rem);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.hero__title .highlight {
+  color: var(--green);
+  position: relative;
+}
+
+.hero__message {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 46ch;
+  margin-bottom: 30px;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   Stock Preview Card (signature element)
+   ===================================================== */
+.stock-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(20, 90, 44, 0.08);
+}
+
+.stock-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--green-dark);
+  margin-bottom: 16px;
+}
+
+.stock-card__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--yellow);
+}
+
+.stock-card__search input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--green-light);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  margin-bottom: 18px;
+}
+
+.stock-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.stock-row__title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stock-row__subject {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-badge--in {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.status-badge--low {
+  background: #FFF6DA;
+  color: #8A6D00;
+}
+
+.status-badge--out {
+  background: #FDEAEA;
+  color: #A13333;
+}
+
+/* =====================================================
+   Features Section
+   ===================================================== */
+.features {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.section__eyebrow {
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.section__title {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  margin-bottom: 46px;
+}
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  text-align: left;
+}
+
+.feature-card {
+  background: var(--green-light);
+  border-radius: var(--radius);
+  padding: 26px 22px;
+}
+
+.feature-card__icon {
+  font-size: 1.6rem;
+}
+
+.feature-card h3 {
+  margin: 14px 0 8px;
+  font-size: 1.05rem;
+  color: var(--green-dark);
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* =====================================================
+   Call To Action Section
+   ===================================================== */
+.cta {
+  background: var(--green);
+  color: var(--white);
+  text-align: center;
+  padding: 70px 40px;
+}
+
+.cta h2 {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin-bottom: 28px;
+}
+
+.cta .btn--primary {
+  background: var(--yellow);
+  color: var(--green-dark);
+}
+
+.cta .btn--primary:hover {
+  background: #E0B321;
+}
+
+/* =====================================================
+   Footer
+   ===================================================== */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 40px;
+  border-top: 1px solid var(--border);
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.footer__system {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.footer__org {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.footer__heading {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.footer__devs ul {
+  list-style: none;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* =====================================================
+   Responsive
+   ===================================================== */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 40px;
+  }
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .navbar {
+    padding: 14px 20px;
+  }
+  .hero {
+    padding: 40px 20px 60px;
+  }
+  .features {
+    padding: 60px 20px;
+  }
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
+}
