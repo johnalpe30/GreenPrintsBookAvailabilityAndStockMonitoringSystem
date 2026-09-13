@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Log In | GreenPrints</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/staff.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar__brand">
+      <a href="index.html">
+        <img src="images/HTC-LOGO.png" alt="Holy Trinity College logo" class="navbar__logo-img">
+      </a>
+      <img src="images/WILDCATS-LOGO.png" alt="Wildcats logo" class="navbar__logo-img">
+    </div>
+    <span class="navbar__center">GreenPrints Book Availability &amp; Stock Monitoring System</span>
+  </header>
+
+  <main class="staff-auth">
+    <div class="staff-auth__card">
+      <p class="hero__eyebrow">Staff Portal</p>
+      <h1 class="staff-auth__title">Staff Log In</h1>
+      <p class="modal__subtitle">Sign in with your GreenPrints staff account to manage the catalog and view student registrations.</p>
+
+      <form id="staffLoginForm" novalidate>
+        <div class="form-group">
+          <label for="staffUsername">Username</label>
+          <input type="text" id="staffUsername" placeholder="Enter your username" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label for="staffPassword">Password</label>
+          <input type="password" id="staffPassword" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+
+        <p class="form-error" id="staffLoginError"></p>
+
+        <button type="submit" class="btn btn--primary btn--large modal__submit">Log In</button>
+      </form>
+
+      <p class="staff-auth__note">Students don't need a password — they sign in with their institutional email on the <a href="index.html">home page</a>.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__brand">
+      <div>
+        <p class="footer__system">GreenPrints Book Availability &amp; Stock Monitoring System</p>
+        <p class="footer__org">A prototype for GreenPrints, Holy Trinity College</p>
+      </div>
+    </div>
+
+    <div class="footer__devs">
+      <p class="footer__heading">Developers</p>
+      <ul>
+        <li>McNeil Pabilona</li>
+        <li>John Alpe Olaer</li>
+        <li>John Dave Molina</li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/staff.js"></script>
+</body>
+</html>

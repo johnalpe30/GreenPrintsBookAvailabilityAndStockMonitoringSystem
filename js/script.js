@@ -1,8 +1,21 @@
 /* =====================================================
    GreenPrints — script.js
-   No login functionality — this only powers the
-   look and feel of the prototype interface.
+   Powers the prototype interface, including the
+   Login / Sign Up popup with a client-side-only OTP
+   step. No real backend or email service is connected.
+
+   Data validation (Task 6): every field is checked with
+   both HTML5 constraint attributes (in index.html) and
+   matching JavaScript validators here, so invalid input is
+   caught before submission whether or not the browser's
+   built-in validation fires. Each field gets its own inline
+   error message and a valid/invalid border color.
    ===================================================== */
+
+const INSTITUTIONAL_DOMAIN = "@online.htcgsc.edu.ph";
+const INSTITUTIONAL_EMAIL_PATTERN = /^[a-zA-Z0-9_.+-]+@online\.htcgsc\.edu\.ph$/i;
+const FULL_NAME_PATTERN = /^[A-Za-z .,'-]+$/;
+const OTP_PATTERN = /^[0-9]{6}$/;
 
 // Sample book data, just to preview what the real
 // stock-checking feature will look like on screen.
@@ -11,6 +24,8 @@ const sampleBooks = [
   { title: "Data Structures and Algorithms", subject: "CS 202", status: "low" },
   { title: "Systems Analysis and Design", subject: "IT 305", status: "out" },
 ];
+
+let currentMode = "login"; // "login" or "signup"
 
 // Turns a status code into a readable label
 function getStatusLabel(status) {
@@ -42,22 +57,227 @@ function renderStockPreview() {
   });
 }
 
-// Since this is a prototype, the "Get Started" buttons
-// just show a short message instead of logging anyone in.
-function setupGetStartedButtons() {
-  const buttonIds = ["getStartedTop", "getStartedHero", "getStartedCta"];
+/* ---------- Field validators ----------
+   Each returns null when the value is valid, or a
+   user-facing error message when it isn't. */
 
+const validators = {
+  fullName(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return "Full name is required.";
+    if (value.length < 2) return "Full name must be at least 2 characters.";
+    if (value.length > 100) return "Full name must be under 100 characters.";
+    if (!FULL_NAME_PATTERN.test(value)) {
+      return "Use letters, spaces, periods, commas, apostrophes, or hyphens only.";
+    }
+    return null;
+  },
+
+  program(value) {
+    if (!value) return "Please select your program or course.";
+    return null;
+  },
+
+  email(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return "Institutional email is required.";
+    if (!INSTITUTIONAL_EMAIL_PATTERN.test(value)) {
+      return `Email must be a valid address ending in ${INSTITUTIONAL_DOMAIN}`;
+    }
+    return null;
+  },
+
+  otpCode(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return "Verification code is required.";
+    if (!OTP_PATTERN.test(value)) return "Enter the 6-digit numeric code sent to your email.";
+    return null;
+  },
+};
+
+/* ---------- Field validation UI helpers ---------- */
+
+// Fields wired up for live validation: [inputId, errorId, validatorKey]
+const AUTH_FIELDS = [
+  ["fullName", "fullNameError", "fullName"],
+  ["program", "programError", "program"],
+  ["email", "emailError", "email"],
+];
+const OTP_FIELDS = [["otpCode", "otpError", "otpCode"]];
+
+function setFieldState(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const errorEl = document.getElementById(errorId);
+  if (!input || !errorEl) return true;
+
+  if (message) {
+    input.classList.add("input-invalid");
+    input.classList.remove("input-valid");
+    errorEl.textContent = message;
+    return false;
+  }
+
+  input.classList.remove("input-invalid");
+  input.classList.add("input-valid");
+  errorEl.textContent = "";
+  return true;
+}
+
+function clearFieldState(inputId, errorId) {
+  const input = document.getElementById(inputId);
+  const errorEl = document.getElementById(errorId);
+  if (input) input.classList.remove("input-invalid", "input-valid");
+  if (errorEl) errorEl.textContent = "";
+}
+
+function validateField(inputId, errorId, validatorKey) {
+  const input = document.getElementById(inputId);
+  const message = validators[validatorKey](input.value);
+  return setFieldState(inputId, errorId, message);
+}
+
+// Wires live validation (as-you-type + on blur) for a set of fields.
+function attachLiveValidation(fields) {
+  fields.forEach(([inputId, errorId, validatorKey]) => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    const revalidate = () => validateField(inputId, errorId, validatorKey);
+    input.addEventListener("blur", revalidate);
+    input.addEventListener("input", revalidate);
+    input.addEventListener("change", revalidate);
+  });
+}
+
+/* ---------- Modal open / close ---------- */
+
+function openModal() {
+  document.getElementById("modalOverlay").classList.add("modal-overlay--open");
+  resetModal();
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("modal-overlay--open");
+}
+
+function resetModal() {
+  // Always land back on the login tab and the form step
+  setMode("login");
+  showStep("form");
+  document.getElementById("authForm").reset();
+  document.getElementById("otpForm").reset();
+  AUTH_FIELDS.forEach(([inputId, errorId]) => clearFieldState(inputId, errorId));
+  OTP_FIELDS.forEach(([inputId, errorId]) => clearFieldState(inputId, errorId));
+}
+
+function showStep(step) {
+  document.getElementById("stepForm").classList.toggle("modal__step--hidden", step !== "form");
+  document.getElementById("stepOtp").classList.toggle("modal__step--hidden", step !== "otp");
+}
+
+/* ---------- Tab switching ---------- */
+
+function setMode(mode) {
+  currentMode = mode;
+
+  const tabLogin = document.getElementById("tabLogin");
+  const tabSignup = document.getElementById("tabSignup");
+  tabLogin.classList.toggle("modal__tab--active", mode === "login");
+  tabSignup.classList.toggle("modal__tab--active", mode === "signup");
+
+  document.getElementById("fieldFullName").classList.toggle("signup-only--visible", mode === "signup");
+  document.getElementById("fieldProgram").classList.toggle("signup-only--visible", mode === "signup");
+
+  // Sign Up-only fields don't apply on the Log In tab — clear any
+  // leftover error state from them so it doesn't linger out of view.
+  if (mode === "login") {
+    clearFieldState("fullName", "fullNameError");
+    clearFieldState("program", "programError");
+  }
+}
+
+/* ---------- Form submission ---------- */
+
+function handleFormSubmit(event) {
+  event.preventDefault();
+
+  const fieldsToCheck = currentMode === "signup" ? AUTH_FIELDS : [["email", "emailError", "email"]];
+
+  let firstInvalidInput = null;
+  let allValid = true;
+
+  fieldsToCheck.forEach(([inputId, errorId, validatorKey]) => {
+    const isValid = validateField(inputId, errorId, validatorKey);
+    if (!isValid) {
+      allValid = false;
+      if (!firstInvalidInput) firstInvalidInput = document.getElementById(inputId);
+    }
+  });
+
+  if (!allValid) {
+    firstInvalidInput.focus();
+    return;
+  }
+
+  const email = document.getElementById("email").value.trim();
+  document.getElementById("otpEmailDisplay").textContent = email;
+  showStep("otp");
+}
+
+function handleOtpSubmit(event) {
+  event.preventDefault();
+
+  const isValid = validateField("otpCode", "otpError", "otpCode");
+  if (!isValid) {
+    document.getElementById("otpCode").focus();
+    return;
+  }
+
+  // Prototype only — no real verification service is connected yet.
+  // Once verified, take the student straight to their dashboard.
+  const email = document.getElementById("otpEmailDisplay").textContent;
+  const fullName = document.getElementById("fullName").value.trim();
+  sessionStorage.setItem("gp_student_email", email);
+  if (fullName) {
+    sessionStorage.setItem("gp_student_fullName", fullName);
+    sessionStorage.setItem("gp_student_firstName", fullName.split(" ")[0]);
+  }
+  closeModal();
+  window.location.href = "dashboard.html";
+}
+
+/* ---------- Wiring everything up ---------- */
+
+function setupModal() {
+  const buttonIds = ["getStartedTop", "getStartedHero", "getStartedCta"];
   buttonIds.forEach((id) => {
     const button = document.getElementById(id);
-    if (!button) return;
-
-    button.addEventListener("click", () => {
-      alert("This is a prototype. Full sign-in and search features are coming in a later version.");
-    });
+    if (button) button.addEventListener("click", openModal);
   });
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+
+  // Clicking the dark overlay itself (not the modal box) also closes it
+  document.getElementById("modalOverlay").addEventListener("click", (event) => {
+    if (event.target.id === "modalOverlay") closeModal();
+  });
+
+  document.getElementById("tabLogin").addEventListener("click", () => setMode("login"));
+  document.getElementById("tabSignup").addEventListener("click", () => setMode("signup"));
+
+  document.getElementById("authForm").addEventListener("submit", handleFormSubmit);
+  document.getElementById("otpForm").addEventListener("submit", handleOtpSubmit);
+
+  document.getElementById("backToForm").addEventListener("click", () => showStep("form"));
+  document.getElementById("resendCode").addEventListener("click", () => {
+    alert("This is a prototype. A new code would be sent to your email in a later version.");
+  });
+
+  attachLiveValidation(AUTH_FIELDS);
+  attachLiveValidation(OTP_FIELDS);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   renderStockPreview();
-  setupGetStartedButtons();
+  setupModal();
 });

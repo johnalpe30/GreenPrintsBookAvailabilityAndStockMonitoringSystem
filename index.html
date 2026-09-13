@@ -16,10 +16,10 @@
   <!-- ============ NAVIGATION BAR ============ -->
   <header class="navbar">
   <div class="navbar__brand">
-    <span class="navbar__system">GreenPrints</span>
-    <span class="navbar__org">Holy Trinity College</span>
-  </div>
-  <span class="navbar__center">Book Availability &amp; Stock Monitoring System</span>
+  <img src="images/HTC-LOGO.png" alt="Holy Trinity College logo" class="navbar__logo-img">
+  <img src="images/WILDCATS-LOGO.png" alt="Wildcats logo" class="navbar__logo-img">
+</div>
+  <span class="navbar__center">GreenPrints Book Availability &amp; Stock Monitoring System</span>
 </header>
 
   <!-- ============ HERO SECTION ============ -->
@@ -98,7 +98,6 @@
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="footer__brand">
-      <span class="navbar__logo">GP</span>
       <div>
         <p class="footer__system">GreenPrints Book Availability &amp; Stock Monitoring System</p>
         <p class="footer__org">A prototype for GreenPrints, Holy Trinity College</p>
@@ -112,8 +111,108 @@
         <li>John Alpe Olaer</li>
         <li>John Dave Molina</li>
       </ul>
+      <a href="staff-login.html" class="footer__staff-link">Staff Log In</a>
     </div>
   </footer>
+
+  <!-- ============ LOGIN / SIGN UP MODAL ============ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+      <button class="modal__close" id="modalClose" aria-label="Close">&times;</button>
+
+      <!-- Step 1: Login / Sign Up form -->
+      <div class="modal__step" id="stepForm">
+        <h2 class="modal__title" id="modalTitle">Welcome to GreenPrints</h2>
+        <p class="modal__subtitle">Use your institutional email to continue.</p>
+
+        <div class="modal__tabs">
+          <button class="modal__tab modal__tab--active" id="tabLogin" type="button">Log In</button>
+          <button class="modal__tab" id="tabSignup" type="button">Sign Up</button>
+        </div>
+
+        <form id="authForm" novalidate>
+          <!-- Sign Up only fields -->
+          <div class="form-group signup-only" id="fieldFullName">
+            <label for="fullName">Full Name</label>
+            <input
+              type="text"
+              id="fullName"
+              placeholder="Juan D. Dela Cruz Jr."
+              minlength="2"
+              maxlength="100"
+              pattern="[A-Za-z .,'\-]+"
+            >
+            <p class="form-hint">Format: First Name, Middle Initial (if applicable), Last Name, Suffix (if applicable)</p>
+            <p class="field-error" id="fullNameError"></p>
+          </div>
+
+          <div class="form-group signup-only" id="fieldProgram">
+            <label for="program">Program / Course</label>
+            <select id="program">
+              <option value="">Select your program</option>
+              <option value="BSIT">BS Information Technology</option>
+              <option value="BSCS">BS Computer Science</option>
+              <option value="BSBA">BS Business Administration</option>
+              <option value="BSED">BS Education</option>
+              <option value="BSHM">BS Hospitality Management</option>
+              <option value="BSA">BS Accountancy</option>
+              <option value="Other">Other</option>
+            </select>
+            <p class="field-error" id="programError"></p>
+          </div>
+
+          <!-- Shared field -->
+          <div class="form-group">
+            <label for="email">Institutional Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="juandelacruz@online.htcgsc.edu.ph"
+              maxlength="100"
+              pattern="^[a-zA-Z0-9_.+\-]+@online\.htcgsc\.edu\.ph$"
+            >
+            <p class="form-hint">Must end in @online.htcgsc.edu.ph</p>
+            <p class="field-error" id="emailError"></p>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--large modal__submit">Continue</button>
+        </form>
+      </div>
+
+      <!-- Step 2: OTP verification -->
+      <div class="modal__step modal__step--hidden" id="stepOtp">
+        <h2 class="modal__title">Check your email</h2>
+        <p class="modal__subtitle">
+          We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
+        </p>
+
+        <form id="otpForm" novalidate>
+          <div class="form-group">
+            <label for="otpCode">Verification Code</label>
+            <input
+              type="text"
+              id="otpCode"
+              minlength="6"
+              maxlength="6"
+              pattern="[0-9]{6}"
+              placeholder="000000"
+              inputmode="numeric"
+            >
+            <p class="field-error" id="otpError"></p>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--large modal__submit">Verify</button>
+        </form>
+
+        <div class="modal__links">
+          <button type="button" class="modal__link" id="resendCode">Resend code</button>
+          <button type="button" class="modal__link" id="backToForm">Back</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <script src="js/script.js"></script>
 </body>

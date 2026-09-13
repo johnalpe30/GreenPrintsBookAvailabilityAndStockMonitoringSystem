@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard | GreenPrints</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- ============ NAVIGATION BAR ============ -->
+  <header class="navbar">
+    <div class="navbar__brand">
+      <a href="index.html">
+        <img src="images/HTC-LOGO.png" alt="Holy Trinity College logo" class="navbar__logo-img">
+      </a>
+      <img src="images/WILDCATS-LOGO.png" alt="Wildcats logo" class="navbar__logo-img">
+    </div>
+    <span class="navbar__center">GreenPrints Book Availability &amp; Stock Monitoring System</span>
+    <div class="navbar__user">
+      <span class="navbar__user-name" id="studentNameLabel">Juan Dela Cruz</span>
+      <button class="btn btn--outline btn--small" id="logoutBtn">Log Out</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <!-- ============ WELCOME + SUMMARY ============ -->
+    <section class="dash-intro">
+      <div>
+        <p class="hero__eyebrow">Student Dashboard</p>
+        <h1 class="dash-intro__title">Welcome back, <span id="studentFirstName">Juan</span></h1>
+        <p class="dash-intro__subtitle">Search the catalog, check live stock, and manage the titles you're waiting on.</p>
+      </div>
+      <div class="dash-summary">
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statTotal">0</span>
+          <span class="dash-summary__label">Titles listed</span>
+        </div>
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statOut">0</span>
+          <span class="dash-summary__label">Currently out of stock</span>
+        </div>
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statWatching">0</span>
+          <span class="dash-summary__label">You're watching</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TABS ============ -->
+    <div class="page-tabs" id="studentTabs">
+      <button class="page-tab page-tab--active" data-tab="catalog">Book Catalog</button>
+      <button class="page-tab" data-tab="requests">Restock Requests</button>
+    </div>
+
+    <!-- ============ CATALOG TAB ============ -->
+    <section class="tab-panel" data-tab-panel="catalog">
+      <section class="catalog">
+        <div class="catalog-toolbar">
+          <input type="text" id="searchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
+
+          <select id="subjectFilter" class="catalog-select">
+            <option value="all">All courses</option>
+          </select>
+
+          <div class="filter-chips" id="statusFilters">
+            <button class="filter-chip filter-chip--active" data-status="all">All</button>
+            <button class="filter-chip" data-status="in">In Stock</button>
+            <button class="filter-chip" data-status="low">Low Stock</button>
+            <button class="filter-chip" data-status="out">Out of Stock</button>
+          </div>
+        </div>
+
+        <p class="catalog-count" id="resultsCount"></p>
+
+        <div class="book-grid" id="bookGrid"></div>
+
+        <p class="empty-state empty-state--hidden" id="catalogEmpty">
+          No titles match your search. Try a different title, author, or course code.
+        </p>
+      </section>
+    </section>
+
+    <!-- ============ RESTOCK REQUESTS TAB ============ -->
+    <section class="tab-panel tab-panel--hidden" data-tab-panel="requests">
+
+      <!-- Captures input for the Restock_Request table: StudentID (from session),
+           BookID (selected here), Request_Date (set on submit), Notification_Status (defaults to Pending). -->
+      <section class="request-form-section">
+        <p class="section__eyebrow">Restock Notifications</p>
+        <h2 class="section__title section__title--left">Request a restock notification</h2>
+        <p class="dash-intro__subtitle" style="margin-bottom: 22px;">Pick a title that's low or out of stock and we'll add it to your watch list below.</p>
+
+        <form id="restockRequestForm" class="request-form">
+          <div class="form-group request-form__field">
+            <label for="restockBookSelect">Book</label>
+            <select id="restockBookSelect" required>
+              <option value="">Select a book...</option>
+            </select>
+          </div>
+
+          <div class="form-group request-form__field">
+            <label for="restockEmailDisplay">Institutional Email</label>
+            <input type="email" id="restockEmailDisplay" readonly>
+          </div>
+
+          <button type="submit" class="btn btn--primary request-form__submit">Request Notification</button>
+        </form>
+
+        <p class="form-error" id="restockFormError"></p>
+      </section>
+
+      <!-- ============ RESTOCK WATCHLIST ============ -->
+      <section class="watchlist">
+        <p class="section__eyebrow">Restock Notifications</p>
+        <h2 class="section__title section__title--left">Titles you're watching</h2>
+
+        <div class="watchlist-panel">
+          <ul class="watchlist-list" id="watchlistList"></ul>
+          <p class="empty-state" id="watchlistEmpty"></p>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="footer__brand">
+      <div>
+        <p class="footer__system">GreenPrints Book Availability &amp; Stock Monitoring System</p>
+        <p class="footer__org">A prototype for GreenPrints, Holy Trinity College</p>
+      </div>
+    </div>
+
+    <div class="footer__devs">
+      <p class="footer__heading">Developers</p>
+      <ul>
+        <li>McNeil Pabilona</li>
+        <li>John Alpe Olaer</li>
+        <li>John Dave Molina</li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

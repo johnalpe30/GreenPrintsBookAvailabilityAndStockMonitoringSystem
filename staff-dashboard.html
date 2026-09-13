@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Dashboard | GreenPrints</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/staff.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar__brand">
+      <a href="index.html">
+        <img src="images/HTC-LOGO.png" alt="Holy Trinity College logo" class="navbar__logo-img">
+      </a>
+      <img src="images/WILDCATS-LOGO.png" alt="Wildcats logo" class="navbar__logo-img">
+    </div>
+    <span class="navbar__center">GreenPrints Book Availability &amp; Stock Monitoring System</span>
+    <div class="navbar__user">
+      <span class="navbar__user-name">Staff · <span id="staffUsernameLabel">adminstaff</span></span>
+      <button class="btn btn--outline btn--small" id="staffLogoutBtn">Log Out</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <section class="dash-intro">
+      <div>
+        <p class="hero__eyebrow">Staff Portal</p>
+        <h1 class="dash-intro__title">Staff Dashboard</h1>
+        <p class="dash-intro__subtitle">Manage the book catalog and view who's registered.</p>
+      </div>
+      <div class="dash-summary">
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statBookTotal">0</span>
+          <span class="dash-summary__label">Titles in catalog</span>
+        </div>
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statBookOut">0</span>
+          <span class="dash-summary__label">Out of stock</span>
+        </div>
+        <div class="dash-summary__stat">
+          <span class="dash-summary__number" id="statStudentTotal">0</span>
+          <span class="dash-summary__label">Registered students</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TABS ============ -->
+    <div class="page-tabs" id="staffTabs">
+      <button class="page-tab page-tab--active" data-tab="books">Manage Books</button>
+      <button class="page-tab" data-tab="students">Registered Students</button>
+    </div>
+
+    <!-- ============ MANAGE BOOKS TAB ============ -->
+    <section class="tab-panel" data-tab-panel="books">
+
+      <!-- Captures input for the Book table: BookID (auto-generated on add),
+           Title, Author, Edition, Subject, Price, Quantity. -->
+      <section class="request-form-section">
+        <p class="section__eyebrow">Inventory Management</p>
+        <h2 class="section__title section__title--left">Add or update a book</h2>
+        <p class="dash-intro__subtitle" style="margin-bottom: 22px;">Select a row below to edit it, or fill this in to add a new title.</p>
+
+        <form id="bookForm" class="book-form">
+          <input type="hidden" id="bookId">
+
+          <div class="form-group book-form__field">
+            <label for="bookTitle">Title</label>
+            <input type="text" id="bookTitle" placeholder="e.g. Introduction to Database Systems">
+          </div>
+
+          <div class="form-group book-form__field">
+            <label for="bookAuthor">Author</label>
+            <input type="text" id="bookAuthor" placeholder="e.g. Elmasri">
+          </div>
+
+          <div class="form-group book-form__field">
+            <label for="bookEdition">Edition</label>
+            <input type="text" id="bookEdition" placeholder="e.g. 7th Ed.">
+          </div>
+
+          <div class="form-group book-form__field">
+            <label for="bookSubject">Subject / Course Code</label>
+            <input type="text" id="bookSubject" placeholder="e.g. IT101">
+          </div>
+
+          <div class="form-group book-form__field">
+            <label for="bookPrice">Price (₱)</label>
+            <input type="number" id="bookPrice" min="0" step="1" placeholder="e.g. 850">
+          </div>
+
+          <div class="form-group book-form__field">
+            <label for="bookQuantity">Quantity in Stock</label>
+            <input type="number" id="bookQuantity" min="0" step="1" placeholder="e.g. 58">
+          </div>
+
+          <div class="book-form__actions">
+            <button type="submit" class="btn btn--primary" id="bookFormSubmit">Add Book</button>
+            <button type="button" class="btn btn--outline" id="bookFormCancel" style="display: none;">Cancel Edit</button>
+          </div>
+        </form>
+
+        <p class="form-error" id="bookFormError"></p>
+      </section>
+
+      <!-- ============ BOOK INVENTORY ============ -->
+      <section class="catalog">
+        <p class="section__eyebrow">Inventory Management</p>
+        <h2 class="section__title section__title--left">Current stock</h2>
+
+        <div class="catalog-toolbar">
+          <input type="text" id="bookSearchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
+        </div>
+
+        <p class="catalog-count" id="bookResultsCount"></p>
+
+        <div class="staff-table-wrap">
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author / Edition</th>
+                <th>Subject</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="bookTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="empty-state empty-state--hidden" id="bookEmpty">
+          No titles match your search.
+        </p>
+      </section>
+
+    </section>
+
+    <!-- ============ REGISTERED STUDENTS TAB ============ -->
+    <section class="tab-panel tab-panel--hidden" data-tab-panel="students">
+      <section class="catalog">
+        <p class="section__eyebrow">Student Records</p>
+        <h2 class="section__title section__title--left">Registered Students</h2>
+
+        <div class="catalog-toolbar">
+          <input type="text" id="studentSearchInput" class="catalog-search" placeholder="Search by name, email, or program...">
+        </div>
+
+        <p class="catalog-count" id="studentResultsCount"></p>
+
+        <div class="staff-table-wrap">
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Institutional Email</th>
+                <th>Program</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="empty-state empty-state--hidden" id="studentEmpty">
+          No students match your search.
+        </p>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__brand">
+      <div>
+        <p class="footer__system">GreenPrints Book Availability &amp; Stock Monitoring System</p>
+        <p class="footer__org">A prototype for GreenPrints, Holy Trinity College</p>
+      </div>
+    </div>
+
+    <div class="footer__devs">
+      <p class="footer__heading">Developers</p>
+      <ul>
+        <li>McNeil Pabilona</li>
+        <li>John Alpe Olaer</li>
+        <li>John Dave Molina</li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/staff.js"></script>
+</body>
+</html>
