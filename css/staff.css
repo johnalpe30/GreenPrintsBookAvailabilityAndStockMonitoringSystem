@@ -1,6 +1,9 @@
 /* =====================================================
    GreenPrints — Staff styles
-   Extends the tokens defined in style.css
+   Extends the tokens defined in style.css. Shared sidebar
+   layout (.app-layout / .app-sidebar / .app-content) now
+   lives in dashboard.css since the student dashboard uses
+   the same component.
    ===================================================== */
 
 /* ---------- Staff login page ---------- */
@@ -82,6 +85,11 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   max-width: 820px;
+}
+
+.book-form--modal {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: none;
 }
 
 .book-form__field {

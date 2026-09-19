@@ -14,7 +14,8 @@
 
 const INSTITUTIONAL_DOMAIN = "@online.htcgsc.edu.ph";
 const INSTITUTIONAL_EMAIL_PATTERN = /^[a-zA-Z0-9_.+-]+@online\.htcgsc\.edu\.ph$/i;
-const FULL_NAME_PATTERN = /^[A-Za-z .,'-]+$/;
+const NAME_PART_PATTERN = /^[A-Za-z '-]+$/;
+const SUFFIX_PATTERN = /^[A-Za-z.]+$/;
 const OTP_PATTERN = /^[0-9]{6}$/;
 
 // Sample book data, just to preview what the real
@@ -62,14 +63,45 @@ function renderStockPreview() {
    user-facing error message when it isn't. */
 
 const validators = {
-  fullName(rawValue) {
+  firstName(rawValue) {
     const value = rawValue.trim();
-    if (!value) return "Full name is required.";
-    if (value.length < 2) return "Full name must be at least 2 characters.";
-    if (value.length > 100) return "Full name must be under 100 characters.";
-    if (!FULL_NAME_PATTERN.test(value)) {
-      return "Use letters, spaces, periods, commas, apostrophes, or hyphens only.";
+    if (!value) return "First name is required.";
+    if (value.length < 2) return "First name must be at least 2 characters.";
+    if (value.length > 50) return "First name must be under 50 characters.";
+    if (!NAME_PART_PATTERN.test(value)) {
+      return "Use letters, spaces, apostrophes, or hyphens only.";
     }
+    return null;
+  },
+
+  lastName(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return "Last name is required.";
+    if (value.length < 2) return "Last name must be at least 2 characters.";
+    if (value.length > 50) return "Last name must be under 50 characters.";
+    if (!NAME_PART_PATTERN.test(value)) {
+      return "Use letters, spaces, apostrophes, or hyphens only.";
+    }
+    return null;
+  },
+
+  // Optional — only validated if the student actually filled it in.
+  middleName(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return null;
+    if (value.length > 50) return "Middle name must be under 50 characters.";
+    if (!NAME_PART_PATTERN.test(value)) {
+      return "Use letters, spaces, apostrophes, or hyphens only.";
+    }
+    return null;
+  },
+
+  // Optional — only validated if the student actually filled it in.
+  suffix(rawValue) {
+    const value = rawValue.trim();
+    if (!value) return null;
+    if (value.length > 10) return "Suffix must be under 10 characters.";
+    if (!SUFFIX_PATTERN.test(value)) return "Use letters and periods only (e.g. Jr., III).";
     return null;
   },
 
@@ -99,7 +131,10 @@ const validators = {
 
 // Fields wired up for live validation: [inputId, errorId, validatorKey]
 const AUTH_FIELDS = [
-  ["fullName", "fullNameError", "fullName"],
+  ["firstName", "firstNameError", "firstName"],
+  ["middleName", "middleNameError", "middleName"],
+  ["lastName", "lastNameError", "lastName"],
+  ["suffix", "suffixError", "suffix"],
   ["program", "programError", "program"],
   ["email", "emailError", "email"],
 ];
@@ -185,13 +220,16 @@ function setMode(mode) {
   tabLogin.classList.toggle("modal__tab--active", mode === "login");
   tabSignup.classList.toggle("modal__tab--active", mode === "signup");
 
-  document.getElementById("fieldFullName").classList.toggle("signup-only--visible", mode === "signup");
+  document.getElementById("fieldNameGroup").classList.toggle("signup-only--visible", mode === "signup");
   document.getElementById("fieldProgram").classList.toggle("signup-only--visible", mode === "signup");
 
   // Sign Up-only fields don't apply on the Log In tab — clear any
   // leftover error state from them so it doesn't linger out of view.
   if (mode === "login") {
-    clearFieldState("fullName", "fullNameError");
+    clearFieldState("firstName", "firstNameError");
+    clearFieldState("middleName", "middleNameError");
+    clearFieldState("lastName", "lastNameError");
+    clearFieldState("suffix", "suffixError");
     clearFieldState("program", "programError");
   }
 }
@@ -236,11 +274,27 @@ function handleOtpSubmit(event) {
   // Prototype only — no real verification service is connected yet.
   // Once verified, take the student straight to their dashboard.
   const email = document.getElementById("otpEmailDisplay").textContent;
-  const fullName = document.getElementById("fullName").value.trim();
+  const firstName = document.getElementById("firstName").value.trim();
+  const middleName = document.getElementById("middleName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const suffix = document.getElementById("suffix").value.trim();
+  const program = document.getElementById("program").value;
+  const programLabel = program
+    ? document.querySelector(`#program option[value="${program}"]`).textContent
+    : "";
+
+  // Composed for display only — the underlying Student record keeps
+  // these as separate atomic columns (FirstName, MiddleName, LastName, Suffix).
+  const fullName = [firstName, middleName, lastName, suffix].filter(Boolean).join(" ");
+
   sessionStorage.setItem("gp_student_email", email);
-  if (fullName) {
+  if (firstName) {
     sessionStorage.setItem("gp_student_fullName", fullName);
-    sessionStorage.setItem("gp_student_firstName", fullName.split(" ")[0]);
+    sessionStorage.setItem("gp_student_firstName", firstName);
+    sessionStorage.setItem("gp_student_middleName", middleName);
+    sessionStorage.setItem("gp_student_lastName", lastName);
+    sessionStorage.setItem("gp_student_suffix", suffix);
+    sessionStorage.setItem("gp_student_program", programLabel);
   }
   closeModal();
   window.location.href = "dashboard.html";

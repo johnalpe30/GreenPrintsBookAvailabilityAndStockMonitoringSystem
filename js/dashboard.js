@@ -1,21 +1,27 @@
 /* =====================================================
    GreenPrints — dashboard.js
-   Powers the student dashboard: catalog search/filter,
-   the Restock Notification Request form, and the resulting
-   watch list. Client-side prototype only — book data and
-   requests are held in memory and reset on reload. In the
-   real system this maps onto the Book Catalog, Stock
-   Monitoring, and Restock Notification modules, backed by
-   the Book and Restock_Request tables.
+   Powers the student dashboard: catalog search/filter, and
+   the resulting restock watch list. Client-side prototype
+   only — book data and requests are held in memory and reset
+   on reload. In the real system this maps onto the Book
+   Catalog, Stock Monitoring, and Restock Notification
+   modules, backed by the Book and Restock_Request tables.
+   Clicking "Notify me" on a catalog card is what creates a
+   Restock_Request row, shown under the Restock Requests tab.
    ===================================================== */
 
 // Signed-in student. Set by script.js at login and passed
 // along via sessionStorage since there's no real session/
-// backend yet. Falls back to a placeholder if this page is
-// opened directly without logging in first.
+// backend yet. Falls back to placeholders if this page is
+// opened directly without signing up first (or if the student
+// only logged in, which doesn't collect name/program).
 const currentStudent = {
   fullName: sessionStorage.getItem("gp_student_fullName") || "Juan Dela Cruz",
   firstName: sessionStorage.getItem("gp_student_firstName") || "Juan",
+  middleName: sessionStorage.getItem("gp_student_middleName") || "",
+  lastName: sessionStorage.getItem("gp_student_lastName") || "Dela Cruz",
+  suffix: sessionStorage.getItem("gp_student_suffix") || "",
+  program: sessionStorage.getItem("gp_student_program") || "",
   email: sessionStorage.getItem("gp_student_email") || "juandelacruz@online.htcgsc.edu.ph",
 };
 
@@ -78,18 +84,6 @@ function populateSubjectFilter() {
   });
 }
 
-function populateRestockBookSelect() {
-  const select = document.getElementById("restockBookSelect");
-  const needsRestock = catalog.filter((b) => getStatus(b.quantity) !== "in");
-
-  needsRestock.forEach((book) => {
-    const option = document.createElement("option");
-    option.value = book.id;
-    option.textContent = `${book.title} (${book.subject}) — ${getStatusLabel(getStatus(book.quantity))}`;
-    select.appendChild(option);
-  });
-}
-
 /* ---------- Filtering ---------- */
 
 function getFilteredCatalog() {
@@ -134,7 +128,9 @@ function renderCatalog() {
     const card = document.createElement("article");
     card.className = "book-card";
 
-    const showNotify = status !== "in";
+    // Only genuinely out-of-stock titles get a notify option —
+    // Low Stock still has copies available, so there's nothing to wait on.
+    const showNotify = status === "out";
 
     card.innerHTML = `
       <div class="book-card__top">
@@ -162,12 +158,34 @@ function renderCatalog() {
   // Wire up the notify buttons just rendered
   grid.querySelectorAll(".notify-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (hasPendingRequest(btn.dataset.bookId)) {
-        removeRestockRequest(btn.dataset.bookId);
+      const bookId = btn.dataset.bookId;
+      if (hasPendingRequest(bookId)) {
+        removeRestockRequest(bookId);
       } else {
-        addRestockRequest(btn.dataset.bookId);
+        addRestockRequest(bookId);
+        const book = catalog.find((b) => b.id === bookId);
+        if (book) openNotifyModal(book.title);
       }
     });
+  });
+}
+
+/* ---------- Notify confirmation modal ---------- */
+
+function openNotifyModal(bookTitle) {
+  document.getElementById("notifyModalBook").textContent = bookTitle;
+  document.getElementById("notifyModalOverlay").classList.add("modal-overlay--open");
+}
+
+function closeNotifyModal() {
+  document.getElementById("notifyModalOverlay").classList.remove("modal-overlay--open");
+}
+
+function setupNotifyModal() {
+  document.getElementById("notifyModalClose").addEventListener("click", closeNotifyModal);
+  document.getElementById("notifyModalOk").addEventListener("click", closeNotifyModal);
+  document.getElementById("notifyModalOverlay").addEventListener("click", (event) => {
+    if (event.target.id === "notifyModalOverlay") closeNotifyModal();
   });
 }
 
@@ -201,33 +219,6 @@ function removeRestockRequest(bookId) {
   renderStats();
 }
 
-function setupRestockForm() {
-  const form = document.getElementById("restockRequestForm");
-  const errorEl = document.getElementById("restockFormError");
-
-  document.getElementById("restockEmailDisplay").value = currentStudent.email;
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const bookId = document.getElementById("restockBookSelect").value;
-
-    if (!bookId) {
-      errorEl.textContent = "Please select a book.";
-      return;
-    }
-
-    if (hasPendingRequest(bookId)) {
-      errorEl.textContent = "You're already watching this title.";
-      return;
-    }
-
-    errorEl.textContent = "";
-    addRestockRequest(bookId);
-    document.getElementById("restockBookSelect").value = "";
-  });
-}
-
 function renderWatchlist() {
   const list = document.getElementById("watchlistList");
   const emptyState = document.getElementById("watchlistEmpty");
@@ -237,7 +228,7 @@ function renderWatchlist() {
   const myRequests = restockRequests.filter((req) => req.studentEmail === currentStudent.email);
 
   if (myRequests.length === 0) {
-    emptyState.textContent = "You're not watching any titles yet. Use the form above, or tap Notify me on a book, to add one here.";
+    emptyState.textContent = "You're not watching any titles yet. Tap Notify me on a book in the Book Catalog tab to add it here.";
     emptyState.classList.remove("empty-state--hidden");
     return;
   }
@@ -297,22 +288,37 @@ function setupToolbar() {
   });
 }
 
-/* ---------- Tabs ---------- */
+/* ---------- Sidebar navigation ---------- */
 
-function setupTabs() {
-  const tabs = document.querySelectorAll("#studentTabs .page-tab");
+function setupSidebar() {
+  const links = document.querySelectorAll("#studentSidebarNav .app-sidebar__link");
   const panels = document.querySelectorAll("[data-tab-panel]");
 
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("page-tab--active"));
-      tab.classList.add("page-tab--active");
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      links.forEach((l) => l.classList.remove("app-sidebar__link--active"));
+      link.classList.add("app-sidebar__link--active");
 
       panels.forEach((panel) => {
-        panel.classList.toggle("tab-panel--hidden", panel.dataset.tabPanel !== tab.dataset.tab);
+        panel.classList.toggle("tab-panel--hidden", panel.dataset.tabPanel !== link.dataset.tab);
       });
     });
   });
+}
+
+/* ---------- Profile panel ---------- */
+// Read-only view of the Student record captured at sign-up.
+// A student who only logged in (no sign-up this session) won't
+// have these in sessionStorage — falls back to em dashes rather
+// than guessing at data we were never given.
+
+function renderProfile() {
+  document.getElementById("profileFirstName").textContent = currentStudent.firstName || "—";
+  document.getElementById("profileMiddleName").textContent = currentStudent.middleName || "—";
+  document.getElementById("profileLastName").textContent = currentStudent.lastName || "—";
+  document.getElementById("profileSuffix").textContent = currentStudent.suffix || "—";
+  document.getElementById("profileProgram").textContent = currentStudent.program || "—";
+  document.getElementById("profileEmail").textContent = currentStudent.email || "—";
 }
 
 /* ---------- Logout ---------- */
@@ -321,6 +327,10 @@ function setupLogout() {
   document.getElementById("logoutBtn").addEventListener("click", () => {
     sessionStorage.removeItem("gp_student_fullName");
     sessionStorage.removeItem("gp_student_firstName");
+    sessionStorage.removeItem("gp_student_middleName");
+    sessionStorage.removeItem("gp_student_lastName");
+    sessionStorage.removeItem("gp_student_suffix");
+    sessionStorage.removeItem("gp_student_program");
     sessionStorage.removeItem("gp_student_email");
     window.location.href = "index.html";
   });
@@ -333,11 +343,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("studentFirstName").textContent = currentStudent.firstName;
 
   populateSubjectFilter();
-  populateRestockBookSelect();
   setupToolbar();
-  setupRestockForm();
-  setupTabs();
+  setupSidebar();
+  setupNotifyModal();
   setupLogout();
+  renderProfile();
   renderCatalog();
   renderWatchlist();
   renderStats();

@@ -111,7 +111,6 @@
         <li>John Alpe Olaer</li>
         <li>John Dave Molina</li>
       </ul>
-      <a href="staff-login.html" class="footer__staff-link">Staff Log In</a>
     </div>
   </footer>
 
@@ -133,18 +132,60 @@
 
         <form id="authForm" novalidate>
           <!-- Sign Up only fields -->
-          <div class="form-group signup-only" id="fieldFullName">
-            <label for="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              placeholder="Juan D. Dela Cruz Jr."
-              minlength="2"
-              maxlength="100"
-              pattern="[A-Za-z .,'\-]+"
-            >
-            <p class="form-hint">Format: First Name, Middle Initial (if applicable), Last Name, Suffix (if applicable)</p>
-            <p class="field-error" id="fullNameError"></p>
+          <div class="signup-only" id="fieldNameGroup">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  placeholder="Juan"
+                  minlength="2"
+                  maxlength="50"
+                  pattern="[A-Za-z '\-]+"
+                >
+                <p class="field-error" id="firstNameError"></p>
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  placeholder="Dela Cruz"
+                  minlength="2"
+                  maxlength="50"
+                  pattern="[A-Za-z '\-]+"
+                >
+                <p class="field-error" id="lastNameError"></p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="middleName">Middle Name <span class="form-label-note">(if applicable)</span></label>
+                <input
+                  type="text"
+                  id="middleName"
+                  placeholder="Dizon"
+                  maxlength="50"
+                  pattern="[A-Za-z '\-]+"
+                >
+                <p class="field-error" id="middleNameError"></p>
+              </div>
+
+              <div class="form-group form-group--suffix">
+                <label for="suffix">Suffix <span class="form-label-note">(if applicable)</span></label>
+                <input
+                  type="text"
+                  id="suffix"
+                  placeholder="Jr."
+                  maxlength="10"
+                  pattern="[A-Za-z.]+"
+                >
+                <p class="field-error" id="suffixError"></p>
+              </div>
+            </div>
           </div>
 
           <div class="form-group signup-only" id="fieldProgram">
@@ -152,7 +193,9 @@
             <select id="program">
               <option value="">Select your program</option>
               <option value="BSIT">BS Information Technology</option>
+              <option value="BSIT">BS Information Technology - Diploma Program</option>
               <option value="BSCS">BS Computer Science</option>
+              <option value="BSCS">BS Computer Science - Diploma Program</option>
               <option value="BSBA">BS Business Administration</option>
               <option value="BSED">BS Education</option>
               <option value="BSHM">BS Hospitality Management</option>

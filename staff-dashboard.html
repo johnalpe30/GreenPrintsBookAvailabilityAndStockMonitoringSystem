@@ -28,155 +28,251 @@
     </div>
   </header>
 
-  <main class="dashboard">
+  <main class="app-layout">
 
-    <section class="dash-intro">
-      <div>
-        <p class="hero__eyebrow">Staff Portal</p>
-        <h1 class="dash-intro__title">Staff Dashboard</h1>
-        <p class="dash-intro__subtitle">Manage the book catalog and view who's registered.</p>
-      </div>
-      <div class="dash-summary">
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statBookTotal">0</span>
-          <span class="dash-summary__label">Titles in catalog</span>
-        </div>
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statBookOut">0</span>
-          <span class="dash-summary__label">Out of stock</span>
-        </div>
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statStudentTotal">0</span>
-          <span class="dash-summary__label">Registered students</span>
-        </div>
-      </div>
-    </section>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="app-sidebar">
+      <p class="app-sidebar__label">Staff Portal</p>
+      <nav class="app-sidebar__nav" id="staffSidebarNav">
+        <button class="app-sidebar__link app-sidebar__link--active" data-tab="add-book">
+          <span class="app-sidebar__icon">➕</span> Add a Book
+        </button>
+        <button class="app-sidebar__link" data-tab="stocks">
+          <span class="app-sidebar__icon">📦</span> Current Stocks
+        </button>
+        <div class="app-sidebar__divider"></div>
+        <button class="app-sidebar__link" data-tab="students">
+          <span class="app-sidebar__icon">🎓</span> Registered Students
+        </button>
+      </nav>
+    </aside>
 
-    <!-- ============ TABS ============ -->
-    <div class="page-tabs" id="staffTabs">
-      <button class="page-tab page-tab--active" data-tab="books">Manage Books</button>
-      <button class="page-tab" data-tab="students">Registered Students</button>
+    <div class="app-content">
+
+      <!-- ============ ADD A BOOK PANEL ============ -->
+      <!-- Captures input for the Book table: BookID (auto-generated),
+           Title, Author, Edition, Subject, Price, Quantity.
+           Add-only — editing an existing title happens from the
+           Current Stocks panel instead, via the Edit popup. -->
+      <section class="tab-panel" data-tab-panel="add-book">
+
+        <section class="dash-intro">
+          <div>
+            <p class="hero__eyebrow">Inventory Management</p>
+            <h1 class="dash-intro__title">Add a Book</h1>
+            <p class="dash-intro__subtitle">Add a new title to the GreenPrints catalog.</p>
+          </div>
+          <div class="dash-summary">
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statBookTotal">0</span>
+              <span class="dash-summary__label">Titles in catalog</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="request-form-section">
+          <form id="bookForm" class="book-form" novalidate>
+            <div class="form-group book-form__field">
+              <label for="bookTitle">Title</label>
+              <input type="text" id="bookTitle" placeholder="e.g. Introduction to Database Systems" minlength="2" maxlength="150">
+              <p class="field-error" id="bookTitleError"></p>
+            </div>
+
+            <div class="form-group book-form__field">
+              <label for="bookAuthor">Author</label>
+              <input type="text" id="bookAuthor" placeholder="e.g. Elmasri" minlength="2" maxlength="100" pattern="[A-Za-z .,'\-]+">
+              <p class="field-error" id="bookAuthorError"></p>
+            </div>
+
+            <div class="form-group book-form__field">
+              <label for="bookEdition">Edition</label>
+              <input type="text" id="bookEdition" placeholder="e.g. 7th Ed." minlength="1" maxlength="20" pattern="[A-Za-z0-9. ]+">
+              <p class="field-error" id="bookEditionError"></p>
+            </div>
+
+            <div class="form-group book-form__field">
+              <label for="bookSubject">Subject / Course Code</label>
+              <input type="text" id="bookSubject" placeholder="e.g. IT101" minlength="4" maxlength="10" pattern="[A-Za-z]{2,10}[0-9]{2,4}">
+              <p class="field-error" id="bookSubjectError"></p>
+            </div>
+
+            <div class="form-group book-form__field">
+              <label for="bookPrice">Price (₱)</label>
+              <input type="number" id="bookPrice" min="0" max="99999" step="0.01" placeholder="e.g. 850">
+              <p class="field-error" id="bookPriceError"></p>
+            </div>
+
+            <div class="form-group book-form__field">
+              <label for="bookQuantity">Quantity in Stock</label>
+              <input type="number" id="bookQuantity" min="0" max="99999" step="1" placeholder="e.g. 58">
+              <p class="field-error" id="bookQuantityError"></p>
+            </div>
+
+            <div class="book-form__actions">
+              <button type="submit" class="btn btn--primary" id="bookFormSubmit">Add Book</button>
+            </div>
+          </form>
+        </section>
+
+      </section>
+
+      <!-- ============ CURRENT STOCKS PANEL ============ -->
+      <!-- View and update existing Book rows. Clicking Edit opens the
+           edit popup instead of scrolling to a form, so staff can move
+           between titles quickly without losing their place in the table. -->
+      <section class="tab-panel tab-panel--hidden" data-tab-panel="stocks">
+
+        <section class="dash-intro">
+          <div>
+            <p class="hero__eyebrow">Inventory Management</p>
+            <h1 class="dash-intro__title">Current Stocks</h1>
+            <p class="dash-intro__subtitle">View and update stock levels for every title.</p>
+          </div>
+          <div class="dash-summary">
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statBookTotalStocks">0</span>
+              <span class="dash-summary__label">Titles in catalog</span>
+            </div>
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statBookOut">0</span>
+              <span class="dash-summary__label">Out of stock</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="catalog">
+          <div class="catalog-toolbar">
+            <input type="text" id="bookSearchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
+          </div>
+
+          <p class="catalog-count" id="bookResultsCount"></p>
+
+          <div class="staff-table-wrap">
+            <table class="staff-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Author / Edition</th>
+                  <th>Subject</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="bookTableBody"></tbody>
+            </table>
+          </div>
+
+          <p class="empty-state empty-state--hidden" id="bookEmpty">
+            No titles match your search.
+          </p>
+        </section>
+
+      </section>
+
+      <!-- ============ REGISTERED STUDENTS PANEL ============ -->
+      <section class="tab-panel tab-panel--hidden" data-tab-panel="students">
+
+        <section class="dash-intro">
+          <div>
+            <p class="hero__eyebrow">Student Records</p>
+            <h1 class="dash-intro__title">Registered Students</h1>
+            <p class="dash-intro__subtitle">Everyone who has signed up for a GreenPrints account.</p>
+          </div>
+          <div class="dash-summary">
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statStudentTotal">0</span>
+              <span class="dash-summary__label">Registered students</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="catalog">
+          <div class="catalog-toolbar">
+            <input type="text" id="studentSearchInput" class="catalog-search" placeholder="Search by name, email, or program...">
+          </div>
+
+          <p class="catalog-count" id="studentResultsCount"></p>
+
+          <div class="staff-table-wrap">
+            <table class="staff-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Institutional Email</th>
+                  <th>Program</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody"></tbody>
+            </table>
+          </div>
+
+          <p class="empty-state empty-state--hidden" id="studentEmpty">
+            No students match your search.
+          </p>
+        </section>
+      </section>
+
     </div>
-
-    <!-- ============ MANAGE BOOKS TAB ============ -->
-    <section class="tab-panel" data-tab-panel="books">
-
-      <!-- Captures input for the Book table: BookID (auto-generated on add),
-           Title, Author, Edition, Subject, Price, Quantity. -->
-      <section class="request-form-section">
-        <p class="section__eyebrow">Inventory Management</p>
-        <h2 class="section__title section__title--left">Add or update a book</h2>
-        <p class="dash-intro__subtitle" style="margin-bottom: 22px;">Select a row below to edit it, or fill this in to add a new title.</p>
-
-        <form id="bookForm" class="book-form">
-          <input type="hidden" id="bookId">
-
-          <div class="form-group book-form__field">
-            <label for="bookTitle">Title</label>
-            <input type="text" id="bookTitle" placeholder="e.g. Introduction to Database Systems">
-          </div>
-
-          <div class="form-group book-form__field">
-            <label for="bookAuthor">Author</label>
-            <input type="text" id="bookAuthor" placeholder="e.g. Elmasri">
-          </div>
-
-          <div class="form-group book-form__field">
-            <label for="bookEdition">Edition</label>
-            <input type="text" id="bookEdition" placeholder="e.g. 7th Ed.">
-          </div>
-
-          <div class="form-group book-form__field">
-            <label for="bookSubject">Subject / Course Code</label>
-            <input type="text" id="bookSubject" placeholder="e.g. IT101">
-          </div>
-
-          <div class="form-group book-form__field">
-            <label for="bookPrice">Price (₱)</label>
-            <input type="number" id="bookPrice" min="0" step="1" placeholder="e.g. 850">
-          </div>
-
-          <div class="form-group book-form__field">
-            <label for="bookQuantity">Quantity in Stock</label>
-            <input type="number" id="bookQuantity" min="0" step="1" placeholder="e.g. 58">
-          </div>
-
-          <div class="book-form__actions">
-            <button type="submit" class="btn btn--primary" id="bookFormSubmit">Add Book</button>
-            <button type="button" class="btn btn--outline" id="bookFormCancel" style="display: none;">Cancel Edit</button>
-          </div>
-        </form>
-
-        <p class="form-error" id="bookFormError"></p>
-      </section>
-
-      <!-- ============ BOOK INVENTORY ============ -->
-      <section class="catalog">
-        <p class="section__eyebrow">Inventory Management</p>
-        <h2 class="section__title section__title--left">Current stock</h2>
-
-        <div class="catalog-toolbar">
-          <input type="text" id="bookSearchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
-        </div>
-
-        <p class="catalog-count" id="bookResultsCount"></p>
-
-        <div class="staff-table-wrap">
-          <table class="staff-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Author / Edition</th>
-                <th>Subject</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="bookTableBody"></tbody>
-          </table>
-        </div>
-
-        <p class="empty-state empty-state--hidden" id="bookEmpty">
-          No titles match your search.
-        </p>
-      </section>
-
-    </section>
-
-    <!-- ============ REGISTERED STUDENTS TAB ============ -->
-    <section class="tab-panel tab-panel--hidden" data-tab-panel="students">
-      <section class="catalog">
-        <p class="section__eyebrow">Student Records</p>
-        <h2 class="section__title section__title--left">Registered Students</h2>
-
-        <div class="catalog-toolbar">
-          <input type="text" id="studentSearchInput" class="catalog-search" placeholder="Search by name, email, or program...">
-        </div>
-
-        <p class="catalog-count" id="studentResultsCount"></p>
-
-        <div class="staff-table-wrap">
-          <table class="staff-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Institutional Email</th>
-                <th>Program</th>
-              </tr>
-            </thead>
-            <tbody id="studentTableBody"></tbody>
-          </table>
-        </div>
-
-        <p class="empty-state empty-state--hidden" id="studentEmpty">
-          No students match your search.
-        </p>
-      </section>
-    </section>
-
   </main>
+
+  <!-- ============ EDIT BOOK MODAL ============ -->
+  <!-- Opened from the Current Stocks table's Edit button. Same Book
+       fields as the Add a Book form, pre-filled, saved in place. -->
+  <div class="modal-overlay" id="editBookModalOverlay">
+    <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="editBookModalTitle">
+      <button class="modal__close" id="editBookModalClose" aria-label="Close">&times;</button>
+
+      <h2 class="modal__title" id="editBookModalTitle">Edit Book</h2>
+      <p class="modal__subtitle">Update this title's details or stock count.</p>
+
+      <form id="editBookForm" class="book-form book-form--modal" novalidate>
+        <input type="hidden" id="editBookId">
+
+        <div class="form-group book-form__field">
+          <label for="editBookTitle">Title</label>
+          <input type="text" id="editBookTitle" minlength="2" maxlength="150">
+          <p class="field-error" id="editBookTitleError"></p>
+        </div>
+
+        <div class="form-group book-form__field">
+          <label for="editBookAuthor">Author</label>
+          <input type="text" id="editBookAuthor" minlength="2" maxlength="100" pattern="[A-Za-z .,'\-]+">
+          <p class="field-error" id="editBookAuthorError"></p>
+        </div>
+
+        <div class="form-group book-form__field">
+          <label for="editBookEdition">Edition</label>
+          <input type="text" id="editBookEdition" minlength="1" maxlength="20" pattern="[A-Za-z0-9. ]+">
+          <p class="field-error" id="editBookEditionError"></p>
+        </div>
+
+        <div class="form-group book-form__field">
+          <label for="editBookSubject">Subject / Course Code</label>
+          <input type="text" id="editBookSubject" minlength="4" maxlength="10" pattern="[A-Za-z]{2,10}[0-9]{2,4}">
+          <p class="field-error" id="editBookSubjectError"></p>
+        </div>
+
+        <div class="form-group book-form__field">
+          <label for="editBookPrice">Price (₱)</label>
+          <input type="number" id="editBookPrice" min="0" max="99999" step="0.01">
+          <p class="field-error" id="editBookPriceError"></p>
+        </div>
+
+        <div class="form-group book-form__field">
+          <label for="editBookQuantity">Quantity in Stock</label>
+          <input type="number" id="editBookQuantity" min="0" max="99999" step="1">
+          <p class="field-error" id="editBookQuantityError"></p>
+        </div>
+
+        <div class="book-form__actions">
+          <button type="submit" class="btn btn--primary" id="editBookFormSubmit">Save Changes</button>
+          <button type="button" class="btn btn--outline" id="editBookFormCancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="footer__brand">

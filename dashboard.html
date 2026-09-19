@@ -28,107 +28,136 @@
     </div>
   </header>
 
-  <main class="dashboard">
+  <main class="app-layout">
 
-    <!-- ============ WELCOME + SUMMARY ============ -->
-    <section class="dash-intro">
-      <div>
-        <p class="hero__eyebrow">Student Dashboard</p>
-        <h1 class="dash-intro__title">Welcome back, <span id="studentFirstName">Juan</span></h1>
-        <p class="dash-intro__subtitle">Search the catalog, check live stock, and manage the titles you're waiting on.</p>
-      </div>
-      <div class="dash-summary">
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statTotal">0</span>
-          <span class="dash-summary__label">Titles listed</span>
-        </div>
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statOut">0</span>
-          <span class="dash-summary__label">Currently out of stock</span>
-        </div>
-        <div class="dash-summary__stat">
-          <span class="dash-summary__number" id="statWatching">0</span>
-          <span class="dash-summary__label">You're watching</span>
-        </div>
-      </div>
-    </section>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="app-sidebar">
+      <p class="app-sidebar__label">Student Portal</p>
+      <nav class="app-sidebar__nav" id="studentSidebarNav">
+        <button class="app-sidebar__link app-sidebar__link--active" data-tab="catalog">
+          <span class="app-sidebar__icon">📚</span> Book Catalog
+        </button>
+        <button class="app-sidebar__link" data-tab="requests">
+          <span class="app-sidebar__icon">🔔</span> Restock Requests
+        </button>
+        <div class="app-sidebar__divider"></div>
+        <button class="app-sidebar__link" data-tab="profile">
+          <span class="app-sidebar__icon">👤</span> My Profile
+        </button>
+      </nav>
+    </aside>
 
-    <!-- ============ TABS ============ -->
-    <div class="page-tabs" id="studentTabs">
-      <button class="page-tab page-tab--active" data-tab="catalog">Book Catalog</button>
-      <button class="page-tab" data-tab="requests">Restock Requests</button>
-    </div>
+    <div class="app-content">
 
-    <!-- ============ CATALOG TAB ============ -->
-    <section class="tab-panel" data-tab-panel="catalog">
-      <section class="catalog">
-        <div class="catalog-toolbar">
-          <input type="text" id="searchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
+      <!-- ============ CATALOG PANEL ============ -->
+      <section class="tab-panel" data-tab-panel="catalog">
 
-          <select id="subjectFilter" class="catalog-select">
-            <option value="all">All courses</option>
-          </select>
-
-          <div class="filter-chips" id="statusFilters">
-            <button class="filter-chip filter-chip--active" data-status="all">All</button>
-            <button class="filter-chip" data-status="in">In Stock</button>
-            <button class="filter-chip" data-status="low">Low Stock</button>
-            <button class="filter-chip" data-status="out">Out of Stock</button>
+        <section class="dash-intro">
+          <div>
+            <p class="hero__eyebrow">Student Dashboard</p>
+            <h1 class="dash-intro__title">Welcome back, <span id="studentFirstName">Juan</span></h1>
+            <p class="dash-intro__subtitle">Search the catalog, check live stock, and manage the titles you're waiting on.</p>
           </div>
-        </div>
+          <div class="dash-summary">
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statTotal">0</span>
+              <span class="dash-summary__label">Titles listed</span>
+            </div>
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statOut">0</span>
+              <span class="dash-summary__label">Currently out of stock</span>
+            </div>
+            <div class="dash-summary__stat">
+              <span class="dash-summary__number" id="statWatching">0</span>
+              <span class="dash-summary__label">You're watching</span>
+            </div>
+          </div>
+        </section>
 
-        <p class="catalog-count" id="resultsCount"></p>
+        <section class="catalog">
+          <div class="catalog-toolbar">
+            <input type="text" id="searchInput" class="catalog-search" placeholder="Search by title, author, or course code...">
 
-        <div class="book-grid" id="bookGrid"></div>
-
-        <p class="empty-state empty-state--hidden" id="catalogEmpty">
-          No titles match your search. Try a different title, author, or course code.
-        </p>
-      </section>
-    </section>
-
-    <!-- ============ RESTOCK REQUESTS TAB ============ -->
-    <section class="tab-panel tab-panel--hidden" data-tab-panel="requests">
-
-      <!-- Captures input for the Restock_Request table: StudentID (from session),
-           BookID (selected here), Request_Date (set on submit), Notification_Status (defaults to Pending). -->
-      <section class="request-form-section">
-        <p class="section__eyebrow">Restock Notifications</p>
-        <h2 class="section__title section__title--left">Request a restock notification</h2>
-        <p class="dash-intro__subtitle" style="margin-bottom: 22px;">Pick a title that's low or out of stock and we'll add it to your watch list below.</p>
-
-        <form id="restockRequestForm" class="request-form">
-          <div class="form-group request-form__field">
-            <label for="restockBookSelect">Book</label>
-            <select id="restockBookSelect" required>
-              <option value="">Select a book...</option>
+            <select id="subjectFilter" class="catalog-select">
+              <option value="all">All courses</option>
             </select>
+
+            <div class="filter-chips" id="statusFilters">
+              <button class="filter-chip filter-chip--active" data-status="all">All</button>
+              <button class="filter-chip" data-status="in">In Stock</button>
+              <button class="filter-chip" data-status="low">Low Stock</button>
+              <button class="filter-chip" data-status="out">Out of Stock</button>
+            </div>
           </div>
 
-          <div class="form-group request-form__field">
-            <label for="restockEmailDisplay">Institutional Email</label>
-            <input type="email" id="restockEmailDisplay" readonly>
-          </div>
+          <p class="catalog-count" id="resultsCount"></p>
 
-          <button type="submit" class="btn btn--primary request-form__submit">Request Notification</button>
-        </form>
+          <div class="book-grid" id="bookGrid"></div>
 
-        <p class="form-error" id="restockFormError"></p>
+          <p class="empty-state empty-state--hidden" id="catalogEmpty">
+            No titles match your search. Try a different title, author, or course code.
+          </p>
+        </section>
       </section>
 
-      <!-- ============ RESTOCK WATCHLIST ============ -->
-      <section class="watchlist">
-        <p class="section__eyebrow">Restock Notifications</p>
-        <h2 class="section__title section__title--left">Titles you're watching</h2>
+      <!-- ============ RESTOCK REQUESTS PANEL ============ -->
+      <!-- Populated only by clicking "Notify me" on a book in the Book Catalog panel.
+           Each entry mirrors a Restock_Request row: StudentID (session email),
+           BookID, Request_Date, Notification_Status (defaults to Pending). -->
+      <section class="tab-panel tab-panel--hidden" data-tab-panel="requests">
+        <section class="watchlist">
+          <p class="section__eyebrow">Restock Notifications</p>
+          <h2 class="section__title section__title--left">Titles you're watching</h2>
+          <p class="dash-intro__subtitle" style="margin-bottom: 22px;">Books you've tapped <strong>Notify me</strong> on in the Book Catalog. We'll let you know once they're back in stock.</p>
 
-        <div class="watchlist-panel">
-          <ul class="watchlist-list" id="watchlistList"></ul>
-          <p class="empty-state" id="watchlistEmpty"></p>
+          <div class="watchlist-panel">
+            <ul class="watchlist-list" id="watchlistList"></ul>
+            <p class="empty-state" id="watchlistEmpty"></p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============ PROFILE PANEL ============ -->
+      <!-- Read-only display of the Student record captured at sign-up:
+           FirstName, MiddleName, LastName, Suffix, Program, Institutional_Email. -->
+      <section class="tab-panel tab-panel--hidden" data-tab-panel="profile">
+        <section class="dash-intro">
+          <div>
+            <p class="hero__eyebrow">Student Portal</p>
+            <h1 class="dash-intro__title">My Profile</h1>
+            <p class="dash-intro__subtitle">The details on file from your sign-up.</p>
+          </div>
+        </section>
+
+        <div class="profile-card">
+          <div class="profile-row">
+            <span class="profile-row__label">First Name</span>
+            <span class="profile-row__value" id="profileFirstName">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-row__label">Middle Name</span>
+            <span class="profile-row__value" id="profileMiddleName">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-row__label">Last Name</span>
+            <span class="profile-row__value" id="profileLastName">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-row__label">Suffix</span>
+            <span class="profile-row__value" id="profileSuffix">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-row__label">Program / Course</span>
+            <span class="profile-row__value" id="profileProgram">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-row__label">Institutional Email</span>
+            <span class="profile-row__value" id="profileEmail">—</span>
+          </div>
         </div>
       </section>
 
-    </section>
-
+    </div>
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -149,6 +178,21 @@
       </ul>
     </div>
   </footer>
+
+  <!-- ============ NOTIFY CONFIRMATION MODAL ============ -->
+  <div class="modal-overlay" id="notifyModalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="notifyModalTitle">
+      <button class="modal__close" id="notifyModalClose" aria-label="Close">&times;</button>
+
+      <h2 class="modal__title" id="notifyModalTitle">You're on the list!</h2>
+      <p class="modal__subtitle">
+        We'll email <strong id="notifyModalBook">this title</strong> the moment it's back in stock.
+        Please check your institutional email regularly for restock updates.
+      </p>
+
+      <button type="button" class="btn btn--primary btn--large modal__submit" id="notifyModalOk">Got it</button>
+    </div>
+  </div>
 
   <script src="js/dashboard.js"></script>
 </body>

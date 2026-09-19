@@ -21,39 +21,111 @@
   font-size: 0.82rem;
 }
 
-/* ---------- Page tabs ---------- */
-.page-tabs {
+/* ---------- Shared sidebar layout (student + staff dashboards) ---------- */
+.app-layout {
   display: flex;
-  gap: 6px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
+  align-items: flex-start;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 40px 100px;
 }
 
-.page-tab {
+.app-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  position: sticky;
+  top: 100px;
+}
+
+.app-sidebar__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0 10px;
+  margin-bottom: 12px;
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
   border: none;
   background: none;
-  padding: 12px 18px;
+  padding: 11px 12px;
+  border-radius: 8px;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-.page-tab:hover {
+.app-sidebar__link:hover {
+  background: var(--green-light);
   color: var(--green-dark);
 }
 
-.page-tab--active {
-  color: var(--green-dark);
-  border-bottom-color: var(--green);
+.app-sidebar__link--active {
+  background: var(--green);
+  color: var(--white);
+}
+
+.app-sidebar__icon {
+  font-size: 1.05rem;
+}
+
+/* Visually separates a link (like Profile) from the rest of the nav list */
+.app-sidebar__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 4px;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .tab-panel--hidden {
   display: none;
+}
+
+@media (max-width: 900px) {
+  .app-layout {
+    flex-direction: column;
+    padding: 36px 20px 80px;
+  }
+  .app-sidebar {
+    width: 100%;
+    position: static;
+  }
+  .app-sidebar__nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .app-sidebar__link {
+    flex-shrink: 0;
+  }
+  .app-sidebar__divider {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    margin: 0 4px;
+  }
 }
 
 /* ---------- Layout ---------- */
@@ -392,4 +464,36 @@
     flex: 1;
     min-width: 0;
   }
+}
+
+/* ---------- Profile card ---------- */
+.profile-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 620px;
+  overflow: hidden;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-row__label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.profile-row__value {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  text-align: right;
 }
